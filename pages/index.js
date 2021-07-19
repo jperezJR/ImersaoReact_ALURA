@@ -6,7 +6,7 @@ import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 
 function ProfileSideBar(propriedades) {
-  console.log(propriedades);
+  //console.log(propriedades);
   return(
     <Box as = "aside">
       <img src={`https://github.com/${propriedades.githubUser}.png`} style={{ borderRadius: '8px'}} />
@@ -27,6 +27,47 @@ function ProfileSideBar(propriedades) {
     </Box>
   )
 }
+
+
+
+function ProfileRelationsBox(propriedades) {
+  console.log(propriedades.items[0]);
+  return (
+    <ProfileRelationsBoxWrapper >
+      <h2 className = "smallTitle">
+        {propriedades.title} ({propriedades.items.length})
+      </h2>
+      
+      
+      { <ul>
+        {propriedades.items.slice(0, 6).map((itemAtual) => {
+          return(
+            <li>
+              <a href = {`/users/${itemAtual["login"]}`} >
+                <img src = {`https://github.com/${itemAtual["login"]}.png`} />
+                <span>{itemAtual["login"]}</span>
+              </a>
+            </li>
+          )
+        })}
+      </ul> } 
+
+
+    </ProfileRelationsBoxWrapper>    
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -54,10 +95,34 @@ export default function Home() {
   ];
 
 
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function() {
+    fetch('https://api.github.com/users/peas/followers')
+    .then(function (respostaDoServidor) {
+      return respostaDoServidor.json();
+    })
+    .then(function (respostaCompleta) {
+      setSeguidores(respostaCompleta);      
+    })
+  }, [] );
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
 
     <> 
-      <AlurakutMenu />
+      <AlurakutMenu githubUser={usuarioAleatorio}/>
 
       <MainGrid>
 
@@ -125,6 +190,12 @@ export default function Home() {
         </div>
 
         <div className = "profileRelationsArea" style = {{ gridArea: 'profileRelationsArea' }}>
+
+            <ProfileRelationsBox title = "Seguidores" items = {seguidores} />
+
+
+
+
 
           <ProfileRelationsBoxWrapper>
             <h2 className = "smallTitle">
